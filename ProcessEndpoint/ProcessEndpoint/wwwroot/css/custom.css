@@ -1,0 +1,47 @@
+.loader {
+    border-top-color: #3498db;
+    -webkit-animation: spinner 1.5s linear infinite;
+    animation: spinner 1.5s linear infinite;
+}
+
+[x-cloak] {
+    display: none;
+}
+
+.modal::-webkit-scrollbar {
+    width: 10px;
+    height: 20px;
+  }
+
+.modal::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #f7f4ed;
+}
+
+.modal::-webkit-scrollbar-thumb {
+    background: #22C55E;
+    border-radius: 100vh;
+    border: 3px solid #f6f7ed;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+    background: #61c987;
+}
+
+@-webkit-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

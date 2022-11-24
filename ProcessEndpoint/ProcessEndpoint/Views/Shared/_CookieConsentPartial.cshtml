@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var showBanner = !consentFeature?.CanTrack ?? false;
+    var cookieString = consentFeature?.CreateConsentCookie();
+}
+
+@*https://learn.microsoft.com/en-us/aspnet/core/security/gdpr?view=aspnetcore-6.0#tempdata-provider-and-session-state-cookies-arent-essential*@
+
+@if (showBanner)
+{
+    <div id="cookieConsent" class="w-full bg-green-500 text-white px-4 py-4 flex justify-between" x-show="isConsentOpen">
+        <p>Use this space to summarize your privacy and cookie use policy.</p>
+        <button type="button" class="bg-white text-green-500 border-black hover:bg-green-300 px-4 py-2 text-sm w-56 rounded-full" @@click="closeConsent" data-cookie-string="@cookieString">
+            <span aria-hidden="true">Accept</span>
+        </button>
+    </div>
+    <script>
+        (function () {
+            var button = document.querySelector("#cookieConsent button[data-cookie-string]");
+            button.addEventListener("click", function (event) {
+                document.cookie = button.dataset.cookieString;
+            }, false);
+        })();
+    </script>
+}

@@ -1,0 +1,227 @@
+﻿@{
+    var notification = TempData["NotificationMessage"] as string;
+    var notificationTitle = TempData["NotificationTitle"] as string;
+    var type = TempData["NotificationType"] as string;
+    var notificationCss = "";
+    if(type != null)
+    {
+        var enumType = Enum.Parse<NotificationType>(type, true);
+
+        switch (enumType)
+        {
+            case NotificationType.Success:
+                TempData["NotificationCss"] = "text-green-500";
+                break;
+
+            case NotificationType.Error:
+                TempData["NotificationCss"] = "text-red-300";
+                break;
+
+            case NotificationType.Warning:
+                TempData["NotificationCss"] = "text-yellow-300";
+                break;
+
+            case NotificationType.Info:
+                TempData["NotificationCss"] = "text-gray-500";
+                break;
+        }
+    }    
+}
+
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="fr" x-id="document">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>@ViewData["Title"] - Process Endpoint</title>
+    <meta name="author" content="name"/>
+    <meta name="description" content="description here"/>
+    <meta name="keywords" content="keywords,here"/>
+    <link rel="stylesheet" href="~/css/output.css"/>
+    <link rel="stylesheet" href="~/css/custom.css"/>
+
+    <link
+        rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/gh/loadingio/ldbutton@v1.0.1/dist/ldbtn.min.css"
+    />
+    <link
+        rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/gh/loadingio/loading.css@v2.0.0/dist/loading.min.css"
+    />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpine-collective/alpine-magic-helpers@1.2.x/dist/index.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>    
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/alpine/init-alpine.js" asp-append-version="true"></script>
+    <!-- You need focus-trap.js to make the modal accessible -->
+    <script src="~/js/focus-trap.js" defer></script>
+</head>
+
+<body>
+    @if (!string.IsNullOrWhiteSpace(notification))
+    {
+        <div x-show="isNotifOpen" class="bg-white mt-2 mr-1 absolute z-30 right-0 border border-slate-300 w-max h-20 shadow-lg rounded-md gap-4 p-4 flex flex-row items-center justify-center">
+		    <section class="w-6 h-full flex flex-col items-center justify-center">
+			    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 @notificationCss">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+		    </section>
+		    <section class="h-full flex flex-col items-start justify-end gap-1">
+			    <h1 class="text-base font-semibold text-zinc-800 antialiased">@notificationTitle</h1>
+			    <p class="text-sm font-medium text-zinc-400 antialiased">@notification</p>
+		    </section>
+		    <button class="w-5 h-full flex flex-col items-center justify-start" @@click="closeNotif">
+			    <svg width="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer">
+				    <path d="M4.06585 3.00507C3.77296 2.71218 3.29809 2.71218 3.00519 3.00507C2.7123 3.29796 2.7123 3.77284 3.00519 4.06573L4.06585 3.00507ZM10.0763 11.1368C10.3692 11.4297 10.844 11.4297 11.1369 11.1368C11.4298 10.8439 11.4298 10.369 11.1369 10.0761L10.0763 11.1368ZM3.00519 4.06573L10.0763 11.1368L11.1369 10.0761L4.06585 3.00507L3.00519 4.06573Z" fill="#989fac"></path>
+				    <path d="M11.1369 4.06573C11.4298 3.77284 11.4298 3.29796 11.1369 3.00507C10.844 2.71218 10.3691 2.71218 10.0762 3.00507L11.1369 4.06573ZM3.00517 10.0761C2.71228 10.369 2.71228 10.8439 3.00517 11.1368C3.29806 11.4297 3.77294 11.4297 4.06583 11.1368L3.00517 10.0761ZM10.0762 3.00507L3.00517 10.0761L4.06583 11.1368L11.1369 4.06573L10.0762 3.00507Z" fill="#989fac"></path>
+			    </svg>
+		</button>
+	    </div>
+    }
+    
+    <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen}">
+        <!-- Desktop sidebar -->
+        <aside class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
+            <div class="py-4 text-gray-500 dark:text-gray-400">
+                <a class="ml-6 text-xl font-bold text-gray-800 dark:text-gray-200" href="#">
+                    Elsa EDI
+                </a>
+                <ul class="mt-6">
+                    <li class="relative px-6 py-3">
+                        @Html.ActiveSpanString("Home", "Index")                        
+                        <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200" is-active-route asp-controller="Home" asp-action="Index">
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span class="ml-4 text-base">Home</span>
+                        </a>
+                    </li>
+                </ul>               
+            </div>
+        </aside>
+        <!-- Mobile sidebar -->
+        <!-- Backdrop -->
+        <div x-show="isSideMenuOpen" x-transition:enter="transition ease-in-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in-out duration-150" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" class="fixed inset-0 z-10 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"></div>
+        <aside class="fixed inset-y-0 z-20 flex-shrink-0 w-64 mt-16 overflow-y-auto bg-white dark:bg-gray-800 md:hidden" x-show="isSideMenuOpen" x-transition:enter="transition ease-in-out duration-150" x-transition:enter-start="opacity-0 transform -translate-x-20"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in-out duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 transform -translate-x-20" @@click.away="closeSideMenu" @@keydown.escape="closeSideMenu">
+            <div class="py-4 text-gray-500 dark:text-gray-400">
+                <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
+                    Elsa EDI
+                </a>
+                <ul class="mt-6">
+                    <li class="relative px-6 py-3">
+                        <!-- Active items have the snippet below -->
+                        <!-- <span
+                             class="absolute inset-y-0 left-0 w-1 bg-green-200 rounded-tr-lg rounded-br-lg"
+                             aria-hidden="true"
+                         ></span> -->
+                        <!-- Add this classes to an active anchor (a tag) -->
+                        <!-- text-gray-800 dark:text-gray-100 -->
+                        <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200" asp-controller="Home" asp-action="Index">
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span class="ml-4">Home</span>
+                        </a>
+                    </li>
+                </ul>                            
+            </div>
+        </aside>
+        <div class="flex flex-col flex-1">
+            <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
+                <div class="container-fluid flex items-center justify-between h-full px-6 mx-auto text-green-200 dark:text-green-300">
+                    <!-- Mobile hamburger -->
+                    <button class="p-1 -ml-1 mr-5 rounded-md md:hidden focus:outline-none focus:shadow-outline-green" @@click="toggleSideMenu" aria-label="Menu">
+                        <svg class="w-6 h-6"
+                             aria-hidden="true"
+                             fill="currentColor"
+                             viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <!-- Search input -->
+                    <div class="flex justify-center flex-1 lg:mr-32">
+                        <div class="relative w-full max-w-xl mr-6 focus-within:text-green-500">
+                            <div class="absolute inset-y-0 flex items-center pl-2">
+                                <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <input class="w-full pl-8 pr-2 py-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-green-300 focus:shadow-outline-green form-input"
+                                type="text" placeholder="Search Workflow" aria-label="Search" />
+                        </div>
+                    </div>
+                    <ul class="flex items-center flex-shrink-0 space-x-6">                                                
+                        <!-- Profile menu -->
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            var userName = User.FindFirst("given_name")?.Value;
+                            var lastName = User.FindFirst("family_name")?.Value;
+
+                            <li class="relative">
+                                <button class="align-middle rounded-full flex justify-center items-center gap-1 focus:shadow-outline-green focus:outline-none" @@click="toggleProfileMenu" @@keydown.escape="closeProfileMenu" aria-label="Account" aria-haspopup="true">
+                                    <img class="object-cover w-8 h-8 rounded-full"
+                                         src="https://ui-avatars.com/api/?name=@userName+@lastName"
+                                         alt=""
+                                         aria-hidden="true" />
+                                         <span class="text-sm text-green-500">@User.FindFirst("email")?.Value</span>
+                                </button>
+                                <template x-if="isProfileMenuOpen">
+                                    <ul x-transition:leave="transition ease-in duration-150"
+                                        x-transition:leave-start="opacity-100"
+                                        x-transition:leave-end="opacity-0"
+                                        @@click.away="closeProfileMenu"
+                                        @@keydown.escape="closeProfileMenu"
+                                        class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                        aria-label="submenu">                                    
+                                        <li class="flex">
+                                            <a asp-action="Logout" asp-controller="Home" class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200">
+                                                <svg class="w-4 h-4 mr-3"
+                                                     aria-hidden="true"
+                                                     fill="none"
+                                                     stroke-linecap="round"
+                                                     stroke-linejoin="round"
+                                                     stroke-width="2"
+                                                     viewBox="0 0 24 24"
+                                                     stroke="currentColor">
+                                                    <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                                </svg>
+                                                <span>Log out</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </template>
+                            </li>
+                        }
+                       
+                    </ul>
+                </div>
+            </header>
+            <main class="h-full pb-16 overflow-y-auto bg-gray-100">
+                <!-- Remove everything INSIDE this div to a really blank page -->
+                <div class="container px-6 mx-auto grid">
+                    @RenderBody()
+                </div>
+            </main>
+            <footer class="flex flex-wrap justify-center flex-col items-center border-teal-200 bg-gray-100 text-black">
+                <partial name="_CookieConsentPartial" />
+                <div class="col-md-4 d-flex justify-items-center p-2">
+                    <span class="text-muted dark:text-white text-sm">© 2022 Elsa EDI</span>
+                </div>
+            </footer>
+        </div>
+    </div>    
+
+     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
