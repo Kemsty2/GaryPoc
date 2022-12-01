@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:42548",
+      "sslPort": 44363
+    }
+  },
+  "profiles": {
+    "ElsaEdiBackend": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "AUTH_AUDIENCE": "account",
+        "AUTH_AUTHORITY": "http://localhost:3125/auth/realms/elsa",
+        "AUTH_AUTHORIZATION_URL": "http://localhost:3125/auth/realms/elsa/protocol/openid-connect/auth",
+        "AUTH_TOKEN_URL": "http://localhost:3125/auth/realms/elsa/protocol/openid-connect/token",
+        "AUTH_CLIENT_ID": "elsa-api",
+        "AUTH_CLIENT_SECRET": "",        
+        "RMQ_HOST": "localhost",
+        "RMQ_VIRTUAL_HOST": "/",
+        "RMQ_USERNAME": "guest",
+        "RMQ_PASSWORD": "guest",
+        "RMQ_PORT": "5672",
+        "JAEGER_HOST": "localhost"
+      },
+      "applicationUrl": "https://localhost:7193;http://localhost:5193",
+      "dotnetRunMessages": true
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/weatherforecast",
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}

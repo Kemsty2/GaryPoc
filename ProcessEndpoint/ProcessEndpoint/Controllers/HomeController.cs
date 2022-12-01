@@ -5,42 +5,47 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProcessEndpoint.Interfaces;
 using ProcessEndpoint.Models;
+using ProcessEndpoint.ViewModels;
 using System.Diagnostics;
 
 namespace ProcessEndpoint.Controllers
 {
     public class HomeController : BaseController
-    {        
+    {
         private readonly IWorkflowApi _workflowApi;
         private readonly ILogger<HomeController> _logger;
 
-       public HomeController(ILogger<HomeController> logger, IWorkflowApi workflowApi)
+        public HomeController(ILogger<HomeController> logger, IWorkflowApi workflowApi)
         {
-            _logger = logger;            
+            _logger = logger;
             _workflowApi = workflowApi;
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //Message("Congrutulations! You've successfully trigger your workflow.", "Workflow Have been triggerred successfully", NotificationType.Success);
-            return View();
+            var accessToken = await GetAccessToken();
+            if (accessToken == null)
+                return RedirectToAction("Logout");
+
+            var workflows = await _workflowApi.GetWorkflows(accessToken);
+            return View(new HomeViewModel(workflows));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> TriggerWorkflow(FileSaveViewModel model)
+        public async Task<IActionResult> TriggerWorkflow([Bind("WorkflowId,Payload")] TriggerWorkflowViewModel model)
         {
             _logger.LogInformation("Trigger Workflow with Payload: {0}", model.ToString());
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var accessToken = await GetAccessToken();
 
             if (accessToken == null)
                 return RedirectToAction("Logout");
 
             try
             {
-                var response = await _workflowApi.TriggerWorkflow(accessToken, model);
+                var response = await _workflowApi.TriggerWorkflow(accessToken, model.WorkflowId, new TriggerWorkflowDto(model.Payload));
                 if (response.IsSuccessStatusCode)
                 {
                     Message("Congrutulations! You've successfully trigger your workflow.", "Workflow Have been triggerred successfully", NotificationType.Success);
@@ -50,11 +55,11 @@ namespace ProcessEndpoint.Controllers
                     Message("An error occurred when triggering the workflow", "An error ocurred", NotificationType.Error);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "An unknown error occurred when triggering workflow");
                 Message("An error occurred when triggering the workflow", "An error ocurred", NotificationType.Error);
-            }            
+            }
             return RedirectToAction("Index");
         }
 
@@ -67,6 +72,14 @@ namespace ProcessEndpoint.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private async Task<string?> GetAccessToken()
+        {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            if (token == null)
+                return null;
+            return $"Bearer {token}";
         }
     }
 }

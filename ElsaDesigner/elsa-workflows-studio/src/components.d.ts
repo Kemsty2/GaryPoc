@@ -224,6 +224,7 @@ export namespace Components {
     interface ElsaStudioDashboard {
         "basePath": string;
         "culture": string;
+        "menuItemSelected": (item: DropdownButtonItem) => Promise<void>;
     }
     interface ElsaStudioHome {
         "culture": string;

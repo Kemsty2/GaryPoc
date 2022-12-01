@@ -23,8 +23,7 @@ import state from '../../../../utils/store';
   tag: 'elsa-studio-root',
   shadow: false
 })
-export class ElsaStudioRoot {
-
+export class ElsaStudioRoot { 
   @Prop({attribute: 'server-url', reflect: true}) serverUrl: string;
   @Prop({attribute: 'monaco-lib-path', reflect: true}) monacoLibPath: string;
   @Prop({attribute: 'culture', reflect: true}) culture: string;
