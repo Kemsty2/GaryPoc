@@ -18,7 +18,6 @@ This repository contains the source code of a proof of concept on how to build a
 
 To setup this project on your personal computer, make sure your computer meets the following requirements.
 
-- Windows 10
 - [Visual Studio 2022 or VsCode](https://visualstudio.microsoft.com/vs/)
 - [.Net 6 SDK and Runtine](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 - [Firefox or Google Chrome Navigator](https://www.google.com/intl/fr/chrome/)
